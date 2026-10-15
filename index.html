@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Box Grup WhatsApp</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f0f2f5; padding: 20px; color: #333; }
+    .container { max-width: 500px; margin: 0 auto; }
+    
+    /* Form Upload */
+    .upload-card {
+      background: white; padding: 20px; border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 25px;
+    }
+    .upload-card h2 { font-size: 18px; margin-bottom: 12px; color: #075e54; }
+    .input-field {
+      width: 100%; padding: 12px; margin-bottom: 12px;
+      border: 1px solid #ddd; border-radius: 8px; font-size: 14px;
+    }
+    .btn-submit {
+      width: 100%; padding: 12px; background: #25d366;
+      color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer;
+    }
+    .btn-submit:hover { background: #1ebe5d; }
+
+    /* Feed Galeri */
+    .memory-feed { display: flex; flex-direction: column; gap: 20px; }
+    .memory-card {
+      background: white; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .memory-card img { width: 100%; height: auto; display: block; max-height: 400px; object-fit: cover; }
+    .memory-content { padding: 15px; }
+    .memory-author { font-weight: bold; color: #075e54; font-size: 15px; margin-bottom: 4px; }
+    .memory-text { font-size: 14px; color: #444; line-height: 1.5; }
+    .loading { text-align: center; color: #888; font-size: 14px; padding: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Formulir Unggah Kenangan -->
+    <div class="upload-card">
+      <h2>📸 Unggah Kenangan Grup</h2>
+      <input type="text" id="nameInput" class="input-field" placeholder="Nama Anda">
+      <textarea id="captionInput" class="input-field" rows="3" placeholder="Tulis cerita atau kenangan di sini..."></textarea>
+      <input type="file" id="imageInput" class="input-field" accept="image/*">
+      <button class="btn-submit" id="submitBtn" onclick="uploadMemory()">Kirim ke Dinding Kenangan</button>
+    </div>
+
+    <!-- Tempat Tampil Feed (Galeri Memori) -->
+    <div id="memoryFeed" class="memory-feed">
+      <div class="loading">Memuat kenangan...</div>
+    </div>
+
+  </div>
+
+  <!-- Panggil Library Supabase langsung dari CDN (Tanpa Instalasi Rumit) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // 1. Masukkan Kunci Supabase Anda di sini
+    const SUPABASE_URL = 'https://pypfrxsrrcgzpcfhmzhi.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5cGZyeHNycmNnenBjZmhtemhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNDg1OTcsImV4cCI6MjEwNzYyNDU5N30.L2KwHz_pD69TFNEE1eErB0hri2V0XFbFLUl9y7qgDBU';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // 2. Fungsi Utama Saat Tombol Diklik
+    async function uploadMemory() {
+      const name = document.getElementById('nameInput').value.trim();
+      const caption = document.getElementById('captionInput').value.trim();
+      const fileInput = document.getElementById('imageInput');
+      const file = fileInput.files[0];
+      const btn = document.getElementById('submitBtn');
+
+      if (!name || !caption || !file) {
+        alert("Harap isi nama, cerita, dan pilih foto terlebih dahulu!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Mengunggah...";
+
+      try {
+        // A. Unggah file foto ke Supabase Storage (Bucket: photos)
+        const fileName = `${Date.now()}_${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('photos')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        // B. Ambil URL Publik dari foto yang baru diunggah
+        const { data: urlData } = supabase.storage
+          .from('photos')
+          .getPublicUrl(fileName);
+
+        const imageUrl = urlData.publicUrl;
+
+        // C. Simpan data teks & URL gambar ke Database Tabel (memories)
+        const { error: dbError } = await supabase
+          .from('memories')
+          .insert([{ name: name, caption: caption, image_url: imageUrl }]);
+
+        if (dbError) throw dbError;
+
+        alert("Berhasil membagikan kenangan!");
+        
+        // Bersihkan form
+        document.getElementById('nameInput').value = '';
+        document.getElementById('captionInput').value = '';
+        fileInput.value = '';
+        
+        // Muat ulang galeri
+        loadMemories();
+
+      } catch (error) {
+        console.error("Terjadi kesalahan:", error.message);
+        alert("Gagal mengunggah: " + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Kirim ke Dinding Kenangan";
+      }
+    }
+
+    // 3. Fungsi Menarik Data untuk Ditampilkan ke Halaman
+    async function loadMemories() {
+      const feed = document.getElementById('memoryFeed');
+      
+      const { data, error } = await supabase
+        .from('memories')
+        .select('*')
+        .order('id', { ascending: false }); // Urutkan dari yang terbaru
+
+      if (error) {
+        feed.innerHTML = `<div class="loading">Gagal memuat data.</div>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        feed.innerHTML = `<div class="loading">Belum ada kenangan yang diunggah. Jadilah yang pertama!</div>`;
+        return;
+      }
+
+      // Rangkai elemen HTML secara otomatis berdasarkan data database
+      feed.innerHTML = '';
+      data.forEach(item => {
+        feed.innerHTML += `
+          <div class="memory-card">
+            <img src="${item.image_url}" alt="Foto Kenangan">
+            <div class="memory-content">
+              <div class="memory-author">${escapeHtml(item.name)}</div>
+              <div class="memory-text">${escapeHtml(item.caption)}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Fungsi pengaman teks sederhana agar tidak error
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Jalankan fungsi load saat halaman pertama kali dibuka
+    loadMemories();
+  </script>
+
+</body>
+</html>
