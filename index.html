@@ -49,6 +49,7 @@
       <textarea id="captionInput" class="input-field" rows="3" placeholder="Tulis cerita atau kenangan di sini..."></textarea>
       <input type="file" id="imageInput" class="input-field" accept="image/*">
       <button class="btn-submit" id="submitBtn" onclick="uploadMemory()">Kirim ke Dinding Kenangan</button>
+      <p id="status" style="margin-top:10px;font-size:13px;color:#c00;word-break:break-word;"></p>
     </div>
 
     <!-- Tempat Tampil Feed (Galeri Memori) -->
@@ -74,6 +75,7 @@
       const fileInput = document.getElementById('imageInput');
       const file = fileInput.files[0];
       const btn = document.getElementById('submitBtn');
+      document.getElementById('status').innerText = '';
 
       if (!name || !caption || !file) {
         alert("Harap isi nama, cerita, dan pilih foto terlebih dahulu!");
@@ -118,7 +120,7 @@
 
       } catch (error) {
         console.error("Terjadi kesalahan:", error.message);
-        alert("Gagal mengunggah: " + error.message);
+        document.getElementById('status').innerText = "Gagal: " + (error.message || JSON.stringify(error));
       } finally {
         btn.disabled = false;
         btn.innerText = "Kirim ke Dinding Kenangan";
