@@ -1,174 +1,320 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Memory Box Grup WhatsApp</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f0f2f5; padding: 20px; color: #333; }
-    .container { max-width: 500px; margin: 0 auto; }
-    
-    /* Form Upload */
-    .upload-card {
-      background: white; padding: 20px; border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 25px;
-    }
-    .upload-card h2 { font-size: 18px; margin-bottom: 12px; color: #075e54; }
-    .input-field {
-      width: 100%; padding: 12px; margin-bottom: 12px;
-      border: 1px solid #ddd; border-radius: 8px; font-size: 14px;
-    }
-    .btn-submit {
-      width: 100%; padding: 12px; background: #25d366;
-      color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer;
-    }
-    .btn-submit:hover { background: #1ebe5d; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Box Grup</title>
+<style>
+  :root {
+    --bg: #2f4858;
+    --bg-deep: #243946;
+    --paper: #fbfaf7;
+    --ink: #1f2a30;
+    --soft: #5d6b73;
+    --accent: #e8b04a;
+    --ok: #2e7d4f;
+    --err: #b3261e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    padding: 20px 16px 60px;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; }
 
-    /* Feed Galeri */
-    .memory-feed { display: flex; flex-direction: column; gap: 20px; }
-    .memory-card {
-      background: white; border-radius: 14px; overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .memory-card img { width: 100%; height: auto; display: block; max-height: 400px; object-fit: cover; }
-    .memory-content { padding: 15px; }
-    .memory-author { font-weight: bold; color: #075e54; font-size: 15px; margin-bottom: 4px; }
-    .memory-text { font-size: 14px; color: #444; line-height: 1.5; }
-    .loading { text-align: center; color: #888; font-size: 14px; padding: 20px; }
-  </style>
+  h1 {
+    color: var(--paper);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 8px 0 4px;
+  }
+  .sub { color: #b9c7cf; font-size: 15px; margin-bottom: 22px; line-height: 1.5; }
+
+  .form {
+    background: var(--bg-deep);
+    border: 2px dashed #56707f;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 30px;
+  }
+  .form label { display: block; color: #d7e0e5; font-size: 14px; margin-bottom: 6px; }
+  .field {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border: 1px solid #56707f;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 16px; /* 16px mencegah zoom otomatis di HP */
+    font-family: inherit;
+  }
+  textarea.field { resize: vertical; min-height: 80px; }
+  input[type=file].field { background: #f1f4f6; font-size: 14px; }
+
+  .preview { display: none; width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 14px; }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #2a2008;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: wait; }
+  button:focus-visible, .field:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+  #status {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.45;
+    word-break: break-word;
+    display: none;
+    font-family: system-ui, sans-serif;
+  }
+  #status.info { display: block; background: #dbe7ee; color: #1d3340; }
+  #status.ok   { display: block; background: #d8efe0; color: #14532d; }
+  #status.err  { display: block; background: #fbdedc; color: #7a1410; }
+
+  /* Feed: kartu seperti foto polaroid */
+  .feed { display: flex; flex-direction: column; gap: 26px; }
+  .polaroid {
+    background: var(--paper);
+    padding: 12px 12px 16px;
+    border-radius: 3px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.28);
+  }
+  .polaroid:nth-child(odd)  { transform: rotate(-1deg); }
+  .polaroid:nth-child(even) { transform: rotate(1deg); }
+  .polaroid img {
+    width: 100%;
+    height: auto;
+    max-height: 460px;
+    object-fit: cover;
+    display: block;
+    background: #e6e3da;
+  }
+  .caption { padding: 14px 4px 0; }
+  .author { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  .text { font-size: 15px; line-height: 1.55; color: var(--soft); white-space: pre-wrap; word-break: break-word; }
+
+  .empty { text-align: center; color: #b9c7cf; padding: 24px 0; font-size: 15px; }
+</style>
 </head>
 <body>
+<div class="wrap">
+  <h1>Memory Box</h1>
+  <p class="sub">Tempel foto dan cerita kenangan grup di sini.</p>
 
-  <div class="container">
-    
-    <!-- Formulir Unggah Kenangan -->
-    <div class="upload-card">
-      <h2>📸 Unggah Kenangan Grup</h2>
-      <input type="text" id="nameInput" class="input-field" placeholder="Nama Anda">
-      <textarea id="captionInput" class="input-field" rows="3" placeholder="Tulis cerita atau kenangan di sini..."></textarea>
-      <input type="file" id="imageInput" class="input-field" accept="image/*">
-      <button class="btn-submit" id="submitBtn" onclick="uploadMemory()">Kirim ke Dinding Kenangan</button>
-      <p id="status" style="margin-top:10px;font-size:13px;color:#c00;word-break:break-word;"></p>
-    </div>
+  <div class="form">
+    <label for="nameInput">Nama kamu</label>
+    <input type="text" id="nameInput" class="field" maxlength="60" autocomplete="name">
 
-    <!-- Tempat Tampil Feed (Galeri Memori) -->
-    <div id="memoryFeed" class="memory-feed">
-      <div class="loading">Memuat kenangan...</div>
-    </div>
+    <label for="captionInput">Cerita kenangan</label>
+    <textarea id="captionInput" class="field" maxlength="500"></textarea>
 
+    <label for="imageInput">Foto</label>
+    <input type="file" id="imageInput" class="field" accept="image/*">
+    <img id="preview" class="preview" alt="Pratinjau foto">
+
+    <button type="button" id="submitBtn">Tempel ke dinding</button>
+    <div id="status" role="status"></div>
   </div>
 
-  <!-- Panggil Library Supabase langsung dari CDN (Tanpa Instalasi Rumit) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // 1. Masukkan Kunci Supabase Anda di sini
-    const SUPABASE_URL = 'https://pypfrxsrrcgzpcfhmzhi.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5cGZyeHNycmNnenBjZmhtemhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNDg1OTcsImV4cCI6MjEwNzYyNDU5N30.L2KwHz_pD69TFNEE1eErB0hri2V0XFbFLUl9y7qgDBU';
+  <div id="feed" class="feed">
+    <div class="empty">Memuat kenangan...</div>
+  </div>
+</div>
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ===== Konfigurasi Supabase =====
+  const SUPABASE_URL = 'https://pypfrxsrrcgzpcfhmzhi.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5cGZyeHNycmNnenBjZmhtemhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNDg1OTcsImV4cCI6MjEwNzYyNDU5N30.L2KwHz_pD69TFNEE1eErB0hri2V0XFbFLUl9y7qgDBU';
+  const BUCKET = 'photos';
+  const TABLE = 'memories';
 
-    // 2. Fungsi Utama Saat Tombol Diklik
-    async function uploadMemory() {
-      const name = document.getElementById('nameInput').value.trim();
-      const caption = document.getElementById('captionInput').value.trim();
-      const fileInput = document.getElementById('imageInput');
-      const file = fileInput.files[0];
-      const btn = document.getElementById('submitBtn');
-      document.getElementById('status').innerText = '';
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $('status');
+  const feedEl = $('feed');
+  const btn = $('submitBtn');
+  const imageInput = $('imageInput');
+  const previewEl = $('preview');
 
-      if (!name || !caption || !file) {
-        alert("Harap isi nama, cerita, dan pilih foto terlebih dahulu!");
-        return;
-      }
+  function setStatus(type, msg) {
+    statusEl.className = type;
+    statusEl.textContent = msg;
+  }
 
-      btn.disabled = true;
-      btn.innerText = "Mengunggah...";
+  // Cek apakah library Supabase berhasil dimuat
+  let db = null;
+  try {
+    if (!window.supabase || !window.supabase.createClient) {
+      throw new Error('Library Supabase gagal dimuat. Cek koneksi internet lalu muat ulang halaman.');
+    }
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (e) {
+    setStatus('err', e.message);
+    feedEl.innerHTML = '';
+  }
 
-      try {
-        // A. Unggah file foto ke Supabase Storage (Bucket: photos)
-        const fileName = `${Date.now()}_${file.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('photos')
-          .upload(fileName, file);
+  // Pratinjau foto yang dipilih
+  imageInput.addEventListener('change', () => {
+    const f = imageInput.files[0];
+    if (!f) { previewEl.style.display = 'none'; return; }
+    previewEl.src = URL.createObjectURL(f);
+    previewEl.style.display = 'block';
+  });
 
-        if (uploadError) throw uploadError;
+  // Perkecil foto agar upload cepat di HP (maks 1600px, JPEG)
+  function compressImage(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        try {
+          const MAX = 1600;
+          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(url);
+            resolve(blob || file);
+          }, 'image/jpeg', 0.85);
+        } catch (e) {
+          resolve(file);
+        }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
 
-        // B. Ambil URL Publik dari foto yang baru diunggah
-        const { data: urlData } = supabase.storage
-          .from('photos')
-          .getPublicUrl(fileName);
+  async function uploadMemory() {
+    if (!db) { setStatus('err', 'Supabase belum siap. Muat ulang halaman.'); return; }
 
-        const imageUrl = urlData.publicUrl;
+    const name = $('nameInput').value.trim();
+    const caption = $('captionInput').value.trim();
+    const file = imageInput.files[0];
 
-        // C. Simpan data teks & URL gambar ke Database Tabel (memories)
-        const { error: dbError } = await supabase
-          .from('memories')
-          .insert([{ name: name, caption: caption, image_url: imageUrl }]);
-
-        if (dbError) throw dbError;
-
-        alert("Berhasil membagikan kenangan!");
-        
-        // Bersihkan form
-        document.getElementById('nameInput').value = '';
-        document.getElementById('captionInput').value = '';
-        fileInput.value = '';
-        
-        // Muat ulang galeri
-        loadMemories();
-
-      } catch (error) {
-        console.error("Terjadi kesalahan:", error.message);
-        document.getElementById('status').innerText = "Gagal: " + (error.message || JSON.stringify(error));
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Kirim ke Dinding Kenangan";
-      }
+    if (!name || !caption || !file) {
+      setStatus('err', 'Isi nama, cerita, dan pilih foto dulu.');
+      return;
     }
 
-    // 3. Fungsi Menarik Data untuk Ditampilkan ke Halaman
-    async function loadMemories() {
-      const feed = document.getElementById('memoryFeed');
-      
-      const { data, error } = await supabase
-        .from('memories')
-        .select('*')
-        .order('id', { ascending: false }); // Urutkan dari yang terbaru
+    btn.disabled = true;
+    btn.textContent = 'Mengunggah...';
+    setStatus('info', 'Memperkecil foto...');
 
-      if (error) {
-        feed.innerHTML = `<div class="loading">Gagal memuat data.</div>`;
-        return;
-      }
+    try {
+      const blob = await compressImage(file);
+      const fileName = Date.now() + '_' + Math.random().toString(36).slice(2, 8) + '.jpg';
 
-      if (data.length === 0) {
-        feed.innerHTML = `<div class="loading">Belum ada kenangan yang diunggah. Jadilah yang pertama!</div>`;
-        return;
-      }
+      setStatus('info', 'Mengunggah foto...');
+      const { error: uploadError } = await db.storage
+        .from(BUCKET)
+        .upload(fileName, blob, { contentType: blob.type || 'image/jpeg' });
+      if (uploadError) throw new Error('Upload foto: ' + uploadError.message);
 
-      // Rangkai elemen HTML secara otomatis berdasarkan data database
-      feed.innerHTML = '';
-      data.forEach(item => {
-        feed.innerHTML += `
-          <div class="memory-card">
-            <img src="${item.image_url}" alt="Foto Kenangan">
-            <div class="memory-content">
-              <div class="memory-author">${escapeHtml(item.name)}</div>
-              <div class="memory-text">${escapeHtml(item.caption)}</div>
-            </div>
-          </div>
-        `;
-      });
+      const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(fileName);
+
+      setStatus('info', 'Menyimpan cerita...');
+      const { error: dbError } = await db
+        .from(TABLE)
+        .insert([{ name: name, caption: caption, image_url: urlData.publicUrl }]);
+      if (dbError) throw new Error('Simpan data: ' + dbError.message);
+
+      setStatus('ok', 'Berhasil. Kenanganmu sudah tampil di dinding.');
+      $('nameInput').value = '';
+      $('captionInput').value = '';
+      imageInput.value = '';
+      previewEl.style.display = 'none';
+      await loadMemories();
+    } catch (err) {
+      console.error(err);
+      setStatus('err', 'Gagal: ' + (err.message || JSON.stringify(err)));
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Tempel ke dinding';
+    }
+  }
+
+  function safeUrl(u) {
+    return /^https?:\/\//i.test(u || '') ? u : '';
+  }
+
+  async function loadMemories() {
+    if (!db) return;
+    const { data, error } = await db
+      .from(TABLE)
+      .select('*')
+      .order('id', { ascending: false });
+
+    feedEl.innerHTML = '';
+
+    if (error) {
+      const d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = 'Gagal memuat data: ' + error.message;
+      feedEl.appendChild(d);
+      return;
     }
 
-    // Fungsi pengaman teks sederhana agar tidak error
-    function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    if (!data || data.length === 0) {
+      const d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = 'Belum ada kenangan. Jadilah yang pertama menempel foto.';
+      feedEl.appendChild(d);
+      return;
     }
 
-    // Jalankan fungsi load saat halaman pertama kali dibuka
-    loadMemories();
-  </script>
+    const frag = document.createDocumentFragment();
+    data.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'polaroid';
 
+      const img = document.createElement('img');
+      img.src = safeUrl(item.image_url);
+      img.alt = 'Foto kenangan dari ' + (item.name || '');
+      img.loading = 'lazy';
+
+      const cap = document.createElement('div');
+      cap.className = 'caption';
+
+      const author = document.createElement('div');
+      author.className = 'author';
+      author.textContent = item.name || '';
+
+      const text = document.createElement('div');
+      text.className = 'text';
+      text.textContent = item.caption || '';
+
+      cap.appendChild(author);
+      cap.appendChild(text);
+      card.appendChild(img);
+      card.appendChild(cap);
+      frag.appendChild(card);
+    });
+    feedEl.appendChild(frag);
+  }
+
+  btn.addEventListener('click', uploadMemory);
+  loadMemories();
+</script>
 </body>
 </html>
