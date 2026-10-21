@@ -57,7 +57,7 @@
   }
   .btn:disabled { opacity: .6; cursor: wait; }
   .btn.google { background: #fff; color: #1f2a30; border: 1px solid #c9d3d9; }
-  .btn:focus-visible, .field:focus-visible, .mini:focus-visible, .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .btn:focus-visible, .field:focus-visible, .mini:focus-visible, .chip:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
   .userbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
   .userbar span { color: #d7e0e5; font-size: 14px; word-break: break-all; }
@@ -88,7 +88,29 @@
   #status.ok   { display: block; background: #d8efe0; color: #14532d; }
   #status.err  { display: block; background: #fbdedc; color: #7a1410; }
 
+  /* Halaman profil */
+  .back { display: inline-block; color: #b9c7cf; font-family: system-ui, sans-serif; font-size: 14px; text-decoration: none; margin-bottom: 14px; }
+  .back:hover { text-decoration: underline; }
+  .pinfo { display: flex; gap: 14px; align-items: center; }
+  .avatar {
+    width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent); color: #2a2008;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 700;
+  }
+  .pbig { color: var(--paper); font-size: 22px; font-weight: 700; word-break: break-word; }
+  .phandle { color: #9fb2bd; font-family: system-ui, sans-serif; font-size: 14px; }
+  .stats { color: #d7e0e5; font-family: system-ui, sans-serif; font-size: 14px; margin-top: 14px; }
+  .prow { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  #profileFormHost { margin-top: 16px; }
+  #profileFormHost:empty { display: none; }
+
+  /* Tautan nama */
+  .plink { color: inherit; text-decoration: none; }
+  a.plink:hover .pname { text-decoration: underline; }
+
   .feed { display: flex; flex-direction: column; gap: 26px; margin-top: 30px; }
+  #profileHead:not(.hidden) + .feed { margin-top: 10px; }
   .polaroid {
     background: var(--paper); padding: 12px 12px 16px; border-radius: 3px;
     box-shadow: 0 8px 18px rgba(0,0,0,.28);
@@ -121,7 +143,9 @@
   .comments { margin: 12px 4px 0; font-family: system-ui, sans-serif; }
   .comment { display: flex; gap: 8px; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #eeeadf; }
   .comment-body { font-size: 14px; line-height: 1.45; color: var(--soft); word-break: break-word; }
-  .comment-body strong { color: var(--ink); margin-right: 6px; }
+  .comment-body .plink { margin-right: 6px; }
+  .comment-body .pname { font-weight: 700; color: var(--ink); }
+  .comment-body .handle { margin-left: 4px; }
   .comment .mini { padding: 4px 8px; font-size: 12px; }
   .no-comment, .login-hint { font-size: 13px; color: #8a8f93; padding: 8px 0; }
   .comment-form { display: flex; gap: 8px; margin-top: 10px; }
@@ -149,26 +173,30 @@
 
     <!-- Ringkasan profil -->
     <div id="profileSummary" class="profilebar hidden">
-      <div class="who"><span id="profName"></span><small id="profHandle"></small></div>
+      <div class="who">
+        <a id="profLink" class="plink" href="#"><span id="profName" class="pname"></span><small id="profHandle"></small></a>
+      </div>
       <button type="button" id="editProfileBtn" class="mini">Edit profil</button>
     </div>
 
-    <!-- Form profil -->
-    <div id="profileForm" class="hidden">
-      <h2 id="profileTitle">Profil</h2>
-      <p id="profileIntro">Buat profil dulu sebelum menambah kenangan atau berkomentar. Username hanya bisa diganti 1 bulan sekali dan nama 1 minggu sekali, jadi pilih dengan teliti.</p>
+    <!-- Form profil (bisa pindah ke halaman profil) -->
+    <div id="profileFormHome">
+      <div id="profileForm" class="hidden">
+        <h2 id="profileTitle">Profil</h2>
+        <p id="profileIntro">Buat profil dulu sebelum menambah kenangan atau berkomentar. Username hanya bisa diganti 1 bulan sekali dan nama 1 minggu sekali, jadi pilih dengan teliti.</p>
 
-      <label for="usernameInput">Username</label>
-      <input type="text" id="usernameInput" class="field" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="contoh: budi_01">
-      <p class="hint" id="usernameHint">Huruf kecil, angka, dan garis bawah (_), 3 sampai 20 karakter. Bisa diganti 1 bulan sekali.</p>
+        <label for="usernameInput">Username</label>
+        <input type="text" id="usernameInput" class="field" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="contoh: budi_01">
+        <p class="hint" id="usernameHint">Huruf kecil, angka, dan garis bawah (_), 3 sampai 20 karakter. Bisa diganti 1 bulan sekali.</p>
 
-      <label for="displayNameInput">Nama</label>
-      <input type="text" id="displayNameInput" class="field" maxlength="40" autocomplete="name">
-      <p class="hint" id="nameHint">Maksimal 40 karakter. Bisa diganti 1 minggu sekali.</p>
+        <label for="displayNameInput">Nama</label>
+        <input type="text" id="displayNameInput" class="field" maxlength="40" autocomplete="name">
+        <p class="hint" id="nameHint">Maksimal 40 karakter. Bisa diganti 1 minggu sekali.</p>
 
-      <div class="formrow">
-        <button type="button" id="saveProfileBtn" class="btn">Simpan profil</button>
-        <button type="button" id="cancelProfileBtn" class="mini hidden">Batal</button>
+        <div class="formrow">
+          <button type="button" id="saveProfileBtn" class="btn">Simpan profil</button>
+          <button type="button" id="cancelProfileBtn" class="mini hidden">Batal</button>
+        </div>
       </div>
     </div>
 
@@ -187,6 +215,9 @@
   </div>
 
   <div id="status" role="status"></div>
+
+  <!-- Kepala halaman profil (hanya tampil di halaman profil) -->
+  <div id="profileHead" class="box hidden"></div>
 
   <div id="feed" class="feed">
     <div class="empty">Memuat kenangan...</div>
@@ -219,6 +250,9 @@
   let me = null;          // user yang sedang masuk (atau null)
   let myProfile = null;   // baris profil milik user (atau null kalau belum dibuat)
   let profilesById = {};  // cache profil untuk semua penulis di feed
+  let viewItems = [];     // kenangan yang sedang tampil (untuk statistik profil)
+  let viewOwner = null;   // pemilik profil yang sedang dilihat (atau null di dinding)
+  let loadSeq = 0;        // penanda permintaan terbaru
 
   function setStatus(type, msg) {
     statusEl.className = type || '';
@@ -291,6 +325,45 @@
     };
   }
 
+  // Elemen nama: tautan ke halaman profil kalau penulisnya punya profil
+  function nameNode(userId, fallbackName) {
+    const a = authorOf(userId, fallbackName);
+    const node = el(a.handle ? 'a' : 'span', 'plink');
+    if (a.handle) node.href = '#' + a.handle;
+    node.appendChild(el('span', 'pname', a.name));
+    if (a.handle) node.appendChild(el('span', 'handle', a.handle));
+    return node;
+  }
+
+  // ===== Rute: dinding utama atau halaman profil (#@username) =====
+  function parseRoute() {
+    const m = /^#@([a-z0-9_]{3,20})$/i.exec(location.hash || '');
+    return { username: m ? m[1].toLowerCase() : '' };
+  }
+  let lastRouteKey = parseRoute().username;
+
+  window.addEventListener('hashchange', () => {
+    const key = parseRoute().username;
+    if (key === lastRouteKey) return;
+    lastRouteKey = key;
+    setStatus('', '');
+    closeProfileForm();
+    $('profileHead').classList.add('hidden');
+    updateChrome();
+    window.scrollTo(0, 0);
+    renderEmpty('Memuat kenangan...');
+    loadMemories();
+  });
+
+  // Atur bagian atas halaman sesuai status login, profil, dan halaman yang dilihat
+  function updateChrome() {
+    const route = parseRoute();
+    const hasProfile = !!myProfile;
+    $('profileSummary').classList.toggle('hidden', !me || !hasProfile);
+    // Form kenangan hanya di dinding utama
+    $('postForm').classList.toggle('hidden', !me || !hasProfile || !!route.username);
+  }
+
   // ===== Login / logout =====
   async function setUser(user) {
     me = user || null;
@@ -335,7 +408,7 @@
     });
   }
 
-  // ===== Profil =====
+  // ===== Profil saya =====
   async function loadMyProfile() {
     const { data, error } = await db.from(PROFILES).select('*').eq('user_id', me.id).maybeSingle();
     if (error) {
@@ -349,20 +422,26 @@
 
   function renderProfileUI() {
     const hasProfile = !!myProfile;
-    $('profileSummary').classList.toggle('hidden', !me || !hasProfile);
-    $('postForm').classList.toggle('hidden', !me || !hasProfile);
-    // Form profil: otomatis terbuka kalau profil belum ada
-    if (me && !hasProfile) openProfileForm();
-    else if (!me) $('profileForm').classList.add('hidden');
+    updateChrome();
+
+    // Form profil otomatis terbuka kalau profil belum ada
+    if (me && !hasProfile) {
+      if ($('profileForm').classList.contains('hidden')) openProfileForm();
+    } else if (!me) {
+      closeProfileForm();
+    }
 
     if (hasProfile) {
       $('profName').textContent = myProfile.display_name;
       $('profHandle').textContent = '@' + myProfile.username;
+      $('profLink').href = '#@' + myProfile.username;
     }
   }
 
-  function openProfileForm() {
+  // host = tempat form ditaruh (di atas halaman atau di dalam halaman profil)
+  function openProfileForm(host) {
     const first = !myProfile;
+    (host || $('profileFormHome')).appendChild($('profileForm'));
     $('profileForm').classList.remove('hidden');
     $('profileTitle').textContent = first ? 'Buat profil' : 'Edit profil';
     $('profileIntro').classList.toggle('hidden', !first);
@@ -387,15 +466,20 @@
     $('saveProfileBtn').disabled = !!(uLock && nLock);
   }
 
+  // Sembunyikan form dan kembalikan ke tempat asalnya
+  function closeProfileForm() {
+    $('profileForm').classList.add('hidden');
+    $('profileFormHome').appendChild($('profileForm'));
+  }
+
   $('editProfileBtn').addEventListener('click', () => {
     setStatus('', '');
-    $('profileSummary').classList.add('hidden');
-    $('postForm').classList.add('hidden');
     openProfileForm();
+    $('profileForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
   $('cancelProfileBtn').addEventListener('click', () => {
-    $('profileForm').classList.add('hidden');
+    closeProfileForm();
     renderProfileUI();
   });
 
@@ -418,6 +502,7 @@
     btn.textContent = 'Menyimpan...';
 
     try {
+      const oldUsername = myProfile ? myProfile.username : null;
       let result;
       if (!myProfile) {
         result = await db.from(PROFILES)
@@ -428,7 +513,7 @@
         if (username !== myProfile.username) changes.username = username;
         if (displayName !== myProfile.display_name) changes.display_name = displayName;
         if (Object.keys(changes).length === 0) {
-          $('profileForm').classList.add('hidden');
+          closeProfileForm();
           renderProfileUI();
           return;
         }
@@ -443,7 +528,14 @@
 
       myProfile = result.data;
       profilesById[me.id] = myProfile;
-      $('profileForm').classList.add('hidden');
+
+      // Kalau sedang di halaman profil sendiri dan username berubah, pindahkan alamatnya
+      if (oldUsername && myProfile.username !== oldUsername && parseRoute().username === oldUsername) {
+        history.replaceState(null, '', location.pathname + location.search + '#@' + myProfile.username);
+        lastRouteKey = myProfile.username;
+      }
+
+      closeProfileForm();
       renderProfileUI();
       setStatus('ok', 'Profil tersimpan.');
       await loadMemories();
@@ -535,14 +627,26 @@
   }
   submitBtn.addEventListener('click', uploadMemory);
 
+  // ===== Statistik di halaman profil =====
+  function updateStats() {
+    const s = document.getElementById('statsLine');
+    if (!s) return;
+    const likes = viewItems.reduce((n, i) => n + i.likes.length, 0);
+    s.textContent = viewItems.length + ' kenangan · ' + likes + ' suka diterima';
+  }
+
+  function emptyMessage() {
+    if (viewOwner) return 'Belum ada kenangan dari ' + authorOf(viewOwner.user_id, viewOwner.display_name).name + '.';
+    return 'Belum ada kenangan. Jadilah yang pertama menempel foto.';
+  }
+
   // ===== Kartu kenangan =====
   function buildCard(item) {
     const card = el('div', 'polaroid');
 
     const img = el('img', 'photo');
     img.src = safeUrl(item.image_url);
-    const who = authorOf(item.user_id, item.name);
-    img.alt = 'Foto kenangan dari ' + who.name;
+    img.alt = 'Foto kenangan dari ' + authorOf(item.user_id, item.name).name;
     img.loading = 'lazy';
 
     const cap = el('div', 'caption');
@@ -559,9 +663,8 @@
     // ---------- Caption, edit, hapus ----------
     function showView() {
       cap.innerHTML = '';
-      const a = authorOf(item.user_id, item.name);
-      const authorEl = el('div', 'author', a.name);
-      if (a.handle) authorEl.appendChild(el('span', 'handle', a.handle));
+      const authorEl = el('div', 'author');
+      authorEl.appendChild(nameNode(item.user_id, item.name));
       cap.appendChild(authorEl);
       cap.appendChild(el('div', 'text', item.caption || ''));
 
@@ -622,8 +725,10 @@
         const path = storagePathFromUrl(item.image_url);
         if (path) await db.storage.from(BUCKET).remove([path]);
         setStatus('ok', 'Kenangan dihapus.');
+        viewItems = viewItems.filter((x) => x !== item);
         card.remove();
-        if (!feedEl.children.length) renderEmpty('Belum ada kenangan. Jadilah yang pertama menempel foto.');
+        updateStats();
+        if (!feedEl.children.length) renderEmpty(emptyMessage());
       });
       actions.appendChild(yes);
       actions.appendChild(mini('Batal', '', showView));
@@ -660,6 +765,7 @@
       }
       likeBtn.disabled = false;
       renderLike();
+      updateStats();
     });
 
     // ---------- Komentar ----------
@@ -677,9 +783,7 @@
       item.comments.forEach((c) => {
         const row = el('div', 'comment');
         const body = el('div', 'comment-body');
-        const a = authorOf(c.user_id, c.author_name);
-        body.appendChild(el('strong', '', a.name));
-        if (a.handle) body.appendChild(el('span', 'handle', a.handle + ' '));
+        body.appendChild(nameNode(c.user_id, c.author_name));
         body.appendChild(document.createTextNode(c.body || ''));
         row.appendChild(body);
 
@@ -756,14 +860,102 @@
     feedEl.appendChild(el('div', 'empty', msg));
   }
 
-  // ===== Muat feed =====
+  // ===== Kepala halaman profil =====
+  function renderProfileHeader(owner, username) {
+    const head = $('profileHead');
+    closeProfileForm();
+    head.innerHTML = '';
+
+    if (!username) {
+      head.classList.add('hidden');
+      updateChrome();
+      return;
+    }
+
+    head.classList.remove('hidden');
+    const back = el('a', 'back', '← Kembali ke dinding');
+    back.href = '#';
+    head.appendChild(back);
+
+    if (!owner) {
+      head.appendChild(el('div', 'pbig', '@' + username));
+      updateChrome();
+      return;
+    }
+
+    const info = el('div', 'pinfo');
+    info.appendChild(el('div', 'avatar', (owner.display_name || '?').trim().charAt(0).toUpperCase()));
+    const text = el('div', '');
+    text.appendChild(el('div', 'pbig', owner.display_name));
+    text.appendChild(el('div', 'phandle', '@' + owner.username));
+    info.appendChild(text);
+    head.appendChild(info);
+
+    const stats = el('div', 'stats');
+    stats.id = 'statsLine';
+    head.appendChild(stats);
+
+    const row = el('div', 'prow');
+    row.appendChild(mini('Salin link', '', async () => {
+      const link = location.origin + location.pathname + '#@' + owner.username;
+      try {
+        await navigator.clipboard.writeText(link);
+        setStatus('ok', 'Link profil disalin: ' + link);
+      } catch (e) {
+        setStatus('info', 'Salin link ini: ' + link);
+      }
+    }));
+    if (me && me.id === owner.user_id && myProfile) {
+      row.appendChild(mini('Edit profil', '', () => {
+        setStatus('', '');
+        openProfileForm($('profileFormHost'));
+      }));
+    }
+    head.appendChild(row);
+
+    const host = el('div', '');
+    host.id = 'profileFormHost';
+    head.appendChild(host);
+
+    updateChrome();
+    updateStats();
+  }
+
+  // ===== Muat feed (dinding utama atau satu profil) =====
   async function loadMemories() {
     if (!db) return;
-    const { data, error } = await db.from(TABLE).select('*').order('id', { ascending: false });
+    const seq = ++loadSeq;
+    const route = parseRoute();
+    lastRouteKey = route.username;
 
-    if (error) { renderEmpty('Gagal memuat data: ' + error.message); return; }
+    let owner = null;
+    let query = db.from(TABLE).select('*').order('id', { ascending: false });
+
+    if (route.username) {
+      const pr = await db.from(PROFILES).select('*').eq('username', route.username).maybeSingle();
+      if (seq !== loadSeq) return;
+      if (pr.error) { renderProfileHeader(null, route.username); renderEmpty('Gagal memuat profil: ' + pr.error.message); return; }
+      owner = pr.data;
+      if (!owner) {
+        viewOwner = null;
+        renderProfileHeader(null, route.username);
+        renderEmpty('Profil @' + route.username + ' tidak ditemukan.');
+        return;
+      }
+      query = query.eq('user_id', owner.user_id);
+    }
+
+    const { data, error } = await query;
+    if (seq !== loadSeq) return;
+    viewOwner = owner;
+
+    if (error) { renderProfileHeader(owner, route.username); renderEmpty('Gagal memuat data: ' + error.message); return; }
     if (!data || data.length === 0) {
-      renderEmpty('Belum ada kenangan. Jadilah yang pertama menempel foto.');
+      viewItems = [];
+      profilesById = {};
+      if (owner) profilesById[owner.user_id] = owner;
+      renderProfileHeader(owner, route.username);
+      renderEmpty(emptyMessage());
       return;
     }
 
@@ -773,6 +965,7 @@
       db.from(LIKES).select('memory_id, user_id').in('memory_id', ids),
       db.from(COMMENTS).select('*').in('memory_id', ids).order('id', { ascending: true })
     ]);
+    if (seq !== loadSeq) return;
 
     if (likesRes.error || commentsRes.error) {
       const msg = (likesRes.error || commentsRes.error).message;
@@ -783,24 +976,32 @@
     const authorIds = new Set();
     data.forEach((d) => { if (d.user_id) authorIds.add(d.user_id); });
     (commentsRes.data || []).forEach((c) => { if (c.user_id) authorIds.add(c.user_id); });
-    profilesById = {};
+    const fresh = {};
     if (authorIds.size > 0) {
       const profRes = await db.from(PROFILES).select('user_id, username, display_name').in('user_id', Array.from(authorIds));
-      if (!profRes.error) (profRes.data || []).forEach((p) => { profilesById[p.user_id] = p; });
+      if (seq !== loadSeq) return;
+      if (!profRes.error) (profRes.data || []).forEach((p) => { fresh[p.user_id] = p; });
     }
+    profilesById = fresh;
+    if (owner) profilesById[owner.user_id] = owner;
+    if (me && myProfile) profilesById[me.id] = myProfile;
 
     const likesBy = {};
     (likesRes.data || []).forEach((l) => { (likesBy[l.memory_id] = likesBy[l.memory_id] || []).push(l.user_id); });
     const commentsBy = {};
     (commentsRes.data || []).forEach((c) => { (commentsBy[c.memory_id] = commentsBy[c.memory_id] || []).push(c); });
 
-    feedEl.innerHTML = '';
-    const frag = document.createDocumentFragment();
     data.forEach((item) => {
       item.likes = likesBy[item.id] || [];
       item.comments = commentsBy[item.id] || [];
-      frag.appendChild(buildCard(item));
     });
+    viewItems = data;
+
+    renderProfileHeader(owner, route.username);
+
+    feedEl.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    data.forEach((item) => frag.appendChild(buildCard(item)));
     feedEl.appendChild(frag);
   }
 </script>
