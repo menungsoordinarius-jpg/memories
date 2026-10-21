@@ -12,6 +12,7 @@
     --ink: #1f2a30;
     --soft: #5d6b73;
     --accent: #e8b04a;
+    --heart: #c2410c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -34,7 +35,9 @@
   }
   .hidden { display: none !important; }
   .box p { color: #d7e0e5; font-size: 15px; line-height: 1.5; margin-bottom: 14px; }
+  .box p.hint { font-size: 13px; color: #9fb2bd; margin: -8px 0 14px; font-family: system-ui, sans-serif; }
   .box label { display: block; color: #d7e0e5; font-size: 14px; margin-bottom: 6px; }
+  .box h2 { color: var(--paper); font-size: 18px; margin-bottom: 10px; }
 
   .field {
     width: 100%; padding: 12px; margin-bottom: 14px;
@@ -42,6 +45,7 @@
     background: #fff; color: var(--ink);
     font-size: 16px; font-family: inherit;
   }
+  .field:disabled { background: #cfd8dd; color: #66757d; }
   textarea.field { resize: vertical; min-height: 80px; }
   input[type=file].field { background: #f1f4f6; font-size: 14px; }
   .preview { display: none; width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 14px; }
@@ -53,10 +57,18 @@
   }
   .btn:disabled { opacity: .6; cursor: wait; }
   .btn.google { background: #fff; color: #1f2a30; border: 1px solid #c9d3d9; }
-  .btn:focus-visible, .field:focus-visible, .mini:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .btn:focus-visible, .field:focus-visible, .mini:focus-visible, .chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
   .userbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
   .userbar span { color: #d7e0e5; font-size: 14px; word-break: break-all; }
+  .profilebar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; padding: 10px 12px; background: #1c2f3a; border-radius: 8px; }
+  .profilebar .who { color: var(--paper); font-size: 15px; word-break: break-word; }
+  .profilebar .who small { color: #9fb2bd; font-family: system-ui, sans-serif; font-size: 13px; margin-left: 6px; }
+  .formrow { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+  .formrow .btn { flex: 1; }
+  .formrow .mini { padding: 14px 16px; }
+  .divider { border: none; border-top: 1px dashed #56707f; margin: 18px 0; }
+
   .mini {
     padding: 8px 12px; border: 1px solid #56707f; border-radius: 6px;
     background: transparent; color: #d7e0e5;
@@ -89,21 +101,42 @@
   }
   .caption { padding: 14px 4px 0; }
   .author { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  .handle { font-family: system-ui, sans-serif; font-weight: 400; font-size: 13px; color: #8a8f93; margin-left: 6px; }
   .text { font-size: 15px; line-height: 1.55; color: var(--soft); white-space: pre-wrap; word-break: break-word; }
   .actions { display: flex; gap: 8px; margin-top: 14px; align-items: center; flex-wrap: wrap; }
   .confirm { font-size: 14px; font-family: system-ui, sans-serif; color: #8a1c14; }
   .caption .field { margin-bottom: 10px; border-color: #c9c5b8; }
   .empty { text-align: center; color: #b9c7cf; padding: 24px 0; font-size: 15px; }
+
+  /* Suka dan komentar */
+  .engage { display: flex; gap: 8px; margin: 14px 4px 0; padding-top: 12px; border-top: 1px solid #e4e0d4; }
+  .chip {
+    padding: 8px 14px; border: 1px solid #d6d1c3; border-radius: 999px;
+    background: #fff; color: var(--ink);
+    font-size: 14px; font-family: system-ui, sans-serif; cursor: pointer;
+  }
+  .chip.liked { background: #fde8dc; border-color: #f0b99a; color: var(--heart); font-weight: 700; }
+  .chip:disabled { opacity: .6; }
+
+  .comments { margin: 12px 4px 0; font-family: system-ui, sans-serif; }
+  .comment { display: flex; gap: 8px; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #eeeadf; }
+  .comment-body { font-size: 14px; line-height: 1.45; color: var(--soft); word-break: break-word; }
+  .comment-body strong { color: var(--ink); margin-right: 6px; }
+  .comment .mini { padding: 4px 8px; font-size: 12px; }
+  .no-comment, .login-hint { font-size: 13px; color: #8a8f93; padding: 8px 0; }
+  .comment-form { display: flex; gap: 8px; margin-top: 10px; }
+  .comment-form .field { margin: 0; flex: 1; padding: 10px; font-size: 15px; border-color: #c9c5b8; }
+  .comment-form .mini { align-self: stretch; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Memory Box</h1>
-  <p class="sub">Tempel foto dan cerita kenangan grup di sini. Semua orang bisa melihat, yang masuk dengan Google bisa menambah.</p>
+  <p class="sub">Tempel foto dan cerita kenangan grup di sini. Semua orang bisa melihat, yang masuk dengan Google bisa menambah, menyukai, dan berkomentar.</p>
 
   <!-- Belum masuk -->
   <div id="loggedOut" class="box">
-    <p>Masuk dengan akun Google untuk menambah kenangan.</p>
+    <p>Masuk dengan akun Google untuk menambah kenangan, menyukai, dan berkomentar.</p>
     <button type="button" id="loginBtn" class="btn google">Masuk dengan Google</button>
   </div>
 
@@ -114,17 +147,43 @@
       <button type="button" id="logoutBtn" class="mini">Keluar</button>
     </div>
 
-    <label for="nameInput">Nama tampilan</label>
-    <input type="text" id="nameInput" class="field" maxlength="60" autocomplete="name">
+    <!-- Ringkasan profil -->
+    <div id="profileSummary" class="profilebar hidden">
+      <div class="who"><span id="profName"></span><small id="profHandle"></small></div>
+      <button type="button" id="editProfileBtn" class="mini">Edit profil</button>
+    </div>
 
-    <label for="captionInput">Cerita kenangan</label>
-    <textarea id="captionInput" class="field" maxlength="500"></textarea>
+    <!-- Form profil -->
+    <div id="profileForm" class="hidden">
+      <h2 id="profileTitle">Profil</h2>
+      <p id="profileIntro">Buat profil dulu sebelum menambah kenangan atau berkomentar. Username hanya bisa diganti 1 bulan sekali dan nama 1 minggu sekali, jadi pilih dengan teliti.</p>
 
-    <label for="imageInput">Foto</label>
-    <input type="file" id="imageInput" class="field" accept="image/*">
-    <img id="preview" class="preview" alt="Pratinjau foto">
+      <label for="usernameInput">Username</label>
+      <input type="text" id="usernameInput" class="field" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="contoh: budi_01">
+      <p class="hint" id="usernameHint">Huruf kecil, angka, dan garis bawah (_), 3 sampai 20 karakter. Bisa diganti 1 bulan sekali.</p>
 
-    <button type="button" id="submitBtn" class="btn">Tempel ke dinding</button>
+      <label for="displayNameInput">Nama</label>
+      <input type="text" id="displayNameInput" class="field" maxlength="40" autocomplete="name">
+      <p class="hint" id="nameHint">Maksimal 40 karakter. Bisa diganti 1 minggu sekali.</p>
+
+      <div class="formrow">
+        <button type="button" id="saveProfileBtn" class="btn">Simpan profil</button>
+        <button type="button" id="cancelProfileBtn" class="mini hidden">Batal</button>
+      </div>
+    </div>
+
+    <!-- Form kenangan -->
+    <div id="postForm" class="hidden">
+      <hr class="divider">
+      <label for="captionInput">Cerita kenangan</label>
+      <textarea id="captionInput" class="field" maxlength="500"></textarea>
+
+      <label for="imageInput">Foto</label>
+      <input type="file" id="imageInput" class="field" accept="image/*">
+      <img id="preview" class="preview" alt="Pratinjau foto">
+
+      <button type="button" id="submitBtn" class="btn">Tempel ke dinding</button>
+    </div>
   </div>
 
   <div id="status" role="status"></div>
@@ -141,6 +200,13 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5cGZyeHNycmNnenBjZmhtemhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNDg1OTcsImV4cCI6MjEwNzYyNDU5N30.L2KwHz_pD69TFNEE1eErB0hri2V0XFbFLUl9y7qgDBU';
   const BUCKET = 'photos';
   const TABLE = 'memories';
+  const LIKES = 'likes';
+  const COMMENTS = 'comments';
+  const PROFILES = 'profiles';
+
+  // Batas ganti (hari). Aturan sebenarnya dijaga oleh database, ini hanya untuk tampilan.
+  const USERNAME_COOLDOWN_DAYS = 30;
+  const NAME_COOLDOWN_DAYS = 7;
 
   const $ = (id) => document.getElementById(id);
   const statusEl = $('status');
@@ -150,7 +216,9 @@
   const previewEl = $('preview');
 
   let db = null;
-  let me = null; // user yang sedang masuk (atau null)
+  let me = null;          // user yang sedang masuk (atau null)
+  let myProfile = null;   // baris profil milik user (atau null kalau belum dibuat)
+  let profilesById = {};  // cache profil untuk semua penulis di feed
 
   function setStatus(type, msg) {
     statusEl.className = type || '';
@@ -168,15 +236,72 @@
     feedEl.innerHTML = '';
   }
 
+  // ===== Helper umum =====
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function mini(label, cls, onClick) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mini' + (cls ? ' ' + cls : '');
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : ''; }
+
+  function storagePathFromUrl(url) {
+    const marker = '/object/public/' + BUCKET + '/';
+    const i = (url || '').indexOf(marker);
+    return i === -1 ? null : decodeURIComponent(url.slice(i + marker.length).split('?')[0]);
+  }
+
+  function googleName(user) {
+    const meta = user.user_metadata || {};
+    return meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : '');
+  }
+
+  function suggestUsername(user) {
+    const base = (user.email ? user.email.split('@')[0] : googleName(user)).toLowerCase().replace(/[^a-z0-9_]/g, '');
+    return base.slice(0, 20);
+  }
+
+  // Tanggal kapan boleh ganti lagi (atau null kalau sudah boleh)
+  function unlockDate(changedAt, days) {
+    if (!changedAt) return null;
+    const t = new Date(changedAt).getTime() + days * 86400000;
+    return t > Date.now() ? new Date(t) : null;
+  }
+
+  function fmtDate(d) {
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  // Nama yang tampil untuk seorang penulis (profil terbaru, atau cadangan dari data lama)
+  function authorOf(userId, fallbackName) {
+    const p = userId ? profilesById[userId] : null;
+    return {
+      name: (p && p.display_name) || fallbackName || 'Anggota',
+      handle: p && p.username ? '@' + p.username : ''
+    };
+  }
+
   // ===== Login / logout =====
-  function setUser(user) {
+  async function setUser(user) {
     me = user || null;
     $('loggedOut').classList.toggle('hidden', !!me);
     $('loggedIn').classList.toggle('hidden', !me);
+    myProfile = null;
     if (me) {
-      const meta = me.user_metadata || {};
-      $('userLabel').textContent = 'Masuk sebagai ' + (me.email || meta.full_name || 'pengguna');
-      if (!$('nameInput').value) $('nameInput').value = meta.full_name || meta.name || '';
+      $('userLabel').textContent = 'Masuk sebagai ' + (me.email || googleName(me));
+      await loadMyProfile();
+    } else {
+      renderProfileUI();
     }
   }
 
@@ -197,18 +322,138 @@
   });
 
   if (db) {
-    db.auth.getSession().then(({ data }) => {
-      setUser(data.session ? data.session.user : null);
+    db.auth.getSession().then(async ({ data }) => {
+      await setUser(data.session ? data.session.user : null);
       loadMemories();
     });
-    db.auth.onAuthStateChange((_event, session) => {
+    db.auth.onAuthStateChange(async (_event, session) => {
       const u = session ? session.user : null;
       if ((u && u.id) !== (me && me.id)) {
-        setUser(u);
+        await setUser(u);
         loadMemories();
       }
     });
   }
+
+  // ===== Profil =====
+  async function loadMyProfile() {
+    const { data, error } = await db.from(PROFILES).select('*').eq('user_id', me.id).maybeSingle();
+    if (error) {
+      setStatus('err', 'Profil belum bisa dimuat: ' + error.message);
+      myProfile = null;
+    } else {
+      myProfile = data || null;
+    }
+    renderProfileUI();
+  }
+
+  function renderProfileUI() {
+    const hasProfile = !!myProfile;
+    $('profileSummary').classList.toggle('hidden', !me || !hasProfile);
+    $('postForm').classList.toggle('hidden', !me || !hasProfile);
+    // Form profil: otomatis terbuka kalau profil belum ada
+    if (me && !hasProfile) openProfileForm();
+    else if (!me) $('profileForm').classList.add('hidden');
+
+    if (hasProfile) {
+      $('profName').textContent = myProfile.display_name;
+      $('profHandle').textContent = '@' + myProfile.username;
+    }
+  }
+
+  function openProfileForm() {
+    const first = !myProfile;
+    $('profileForm').classList.remove('hidden');
+    $('profileTitle').textContent = first ? 'Buat profil' : 'Edit profil';
+    $('profileIntro').classList.toggle('hidden', !first);
+    $('cancelProfileBtn').classList.toggle('hidden', first);
+
+    const uIn = $('usernameInput');
+    const nIn = $('displayNameInput');
+    uIn.value = first ? suggestUsername(me) : myProfile.username;
+    nIn.value = first ? googleName(me).slice(0, 40) : myProfile.display_name;
+
+    // Terkunci kalau belum waktunya ganti
+    const uLock = first ? null : unlockDate(myProfile.username_changed_at, USERNAME_COOLDOWN_DAYS);
+    const nLock = first ? null : unlockDate(myProfile.name_changed_at, NAME_COOLDOWN_DAYS);
+    uIn.disabled = !!uLock;
+    nIn.disabled = !!nLock;
+    $('usernameHint').textContent = uLock
+      ? 'Username baru bisa diganti lagi pada ' + fmtDate(uLock) + '.'
+      : 'Huruf kecil, angka, dan garis bawah (_), 3 sampai 20 karakter. Bisa diganti 1 bulan sekali.';
+    $('nameHint').textContent = nLock
+      ? 'Nama baru bisa diganti lagi pada ' + fmtDate(nLock) + '.'
+      : 'Maksimal 40 karakter. Bisa diganti 1 minggu sekali.';
+    $('saveProfileBtn').disabled = !!(uLock && nLock);
+  }
+
+  $('editProfileBtn').addEventListener('click', () => {
+    setStatus('', '');
+    $('profileSummary').classList.add('hidden');
+    $('postForm').classList.add('hidden');
+    openProfileForm();
+  });
+
+  $('cancelProfileBtn').addEventListener('click', () => {
+    $('profileForm').classList.add('hidden');
+    renderProfileUI();
+  });
+
+  $('saveProfileBtn').addEventListener('click', async () => {
+    if (!db || !me) return;
+    const username = $('usernameInput').value.trim().toLowerCase();
+    const displayName = $('displayNameInput').value.trim();
+
+    if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+      setStatus('err', 'Username harus 3 sampai 20 karakter: huruf kecil, angka, atau garis bawah (_).');
+      return;
+    }
+    if (displayName.length < 1 || displayName.length > 40) {
+      setStatus('err', 'Nama harus 1 sampai 40 karakter.');
+      return;
+    }
+
+    const btn = $('saveProfileBtn');
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+
+    try {
+      let result;
+      if (!myProfile) {
+        result = await db.from(PROFILES)
+          .insert([{ user_id: me.id, username: username, display_name: displayName }])
+          .select().single();
+      } else {
+        const changes = {};
+        if (username !== myProfile.username) changes.username = username;
+        if (displayName !== myProfile.display_name) changes.display_name = displayName;
+        if (Object.keys(changes).length === 0) {
+          $('profileForm').classList.add('hidden');
+          renderProfileUI();
+          return;
+        }
+        result = await db.from(PROFILES).update(changes).eq('user_id', me.id).select().single();
+      }
+
+      if (result.error) {
+        const err = result.error;
+        if (err.code === '23505') throw new Error('Username itu sudah dipakai orang lain. Coba yang lain.');
+        throw new Error(err.message);
+      }
+
+      myProfile = result.data;
+      profilesById[me.id] = myProfile;
+      $('profileForm').classList.add('hidden');
+      renderProfileUI();
+      setStatus('ok', 'Profil tersimpan.');
+      await loadMemories();
+    } catch (err) {
+      setStatus('err', 'Gagal menyimpan profil: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Simpan profil';
+    }
+  });
 
   // ===== Pratinjau & kompres foto =====
   imageInput.addEventListener('change', () => {
@@ -241,13 +486,13 @@
   // ===== Upload kenangan baru =====
   async function uploadMemory() {
     if (!db || !me) { setStatus('err', 'Masuk dengan Google dulu.'); return; }
+    if (!myProfile) { setStatus('err', 'Buat profil dulu sebelum menambah kenangan.'); return; }
 
-    const name = $('nameInput').value.trim();
     const caption = $('captionInput').value.trim();
     const file = imageInput.files[0];
 
-    if (!name || !caption || !file) {
-      setStatus('err', 'Isi nama, cerita, dan pilih foto dulu.');
+    if (!caption || !file) {
+      setStatus('err', 'Isi cerita dan pilih foto dulu.');
       return;
     }
 
@@ -257,7 +502,6 @@
 
     try {
       const blob = await compressImage(file);
-      // Foto disimpan di folder milik user, dipakai oleh policy storage
       const path = me.id + '/' + Date.now() + '_' + Math.random().toString(36).slice(2, 8) + '.jpg';
 
       setStatus('info', 'Mengunggah foto...');
@@ -268,8 +512,12 @@
       const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(path);
 
       setStatus('info', 'Menyimpan cerita...');
-      const { error: dbErr } = await db.from(TABLE)
-        .insert([{ name: name, caption: caption, image_url: urlData.publicUrl, user_id: me.id }]);
+      const { error: dbErr } = await db.from(TABLE).insert([{
+        name: myProfile.display_name,
+        caption: caption,
+        image_url: urlData.publicUrl,
+        user_id: me.id
+      }]);
       if (dbErr) throw new Error('Simpan data: ' + dbErr.message);
 
       setStatus('ok', 'Berhasil. Kenanganmu sudah tampil di dinding.');
@@ -287,56 +535,38 @@
   }
   submitBtn.addEventListener('click', uploadMemory);
 
-  // ===== Tampilkan feed =====
-  function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : ''; }
-
-  function storagePathFromUrl(url) {
-    const marker = '/object/public/' + BUCKET + '/';
-    const i = (url || '').indexOf(marker);
-    return i === -1 ? null : decodeURIComponent(url.slice(i + marker.length).split('?')[0]);
-  }
-
-  function mini(label, cls, onClick) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'mini' + (cls ? ' ' + cls : '');
-    b.textContent = label;
-    b.addEventListener('click', onClick);
-    return b;
-  }
-
+  // ===== Kartu kenangan =====
   function buildCard(item) {
-    const card = document.createElement('div');
-    card.className = 'polaroid';
+    const card = el('div', 'polaroid');
 
-    const img = document.createElement('img');
-    img.className = 'photo';
+    const img = el('img', 'photo');
     img.src = safeUrl(item.image_url);
-    img.alt = 'Foto kenangan dari ' + (item.name || '');
+    const who = authorOf(item.user_id, item.name);
+    img.alt = 'Foto kenangan dari ' + who.name;
     img.loading = 'lazy';
 
-    const cap = document.createElement('div');
-    cap.className = 'caption';
+    const cap = el('div', 'caption');
+    const engage = el('div', 'engage');
+    const commentsBox = el('div', 'comments hidden');
 
     card.appendChild(img);
     card.appendChild(cap);
+    card.appendChild(engage);
+    card.appendChild(commentsBox);
 
     const isMine = !!(me && item.user_id && item.user_id === me.id);
 
+    // ---------- Caption, edit, hapus ----------
     function showView() {
       cap.innerHTML = '';
-      const author = document.createElement('div');
-      author.className = 'author';
-      author.textContent = item.name || '';
-      const text = document.createElement('div');
-      text.className = 'text';
-      text.textContent = item.caption || '';
-      cap.appendChild(author);
-      cap.appendChild(text);
+      const a = authorOf(item.user_id, item.name);
+      const authorEl = el('div', 'author', a.name);
+      if (a.handle) authorEl.appendChild(el('span', 'handle', a.handle));
+      cap.appendChild(authorEl);
+      cap.appendChild(el('div', 'text', item.caption || ''));
 
       if (isMine) {
-        const actions = document.createElement('div');
-        actions.className = 'actions';
+        const actions = el('div', 'actions');
         actions.appendChild(mini('Edit', '', showEdit));
         actions.appendChild(mini('Hapus', 'danger', showConfirm));
         cap.appendChild(actions);
@@ -345,25 +575,18 @@
 
     function showEdit() {
       cap.innerHTML = '';
-      const nameIn = document.createElement('input');
-      nameIn.className = 'field';
-      nameIn.maxLength = 60;
-      nameIn.value = item.name || '';
-      const capIn = document.createElement('textarea');
-      capIn.className = 'field';
+      const capIn = el('textarea', 'field');
       capIn.maxLength = 500;
       capIn.value = item.caption || '';
 
-      const actions = document.createElement('div');
-      actions.className = 'actions';
+      const actions = el('div', 'actions');
       const saveBtn = mini('Simpan', 'primary', async () => {
-        const n = nameIn.value.trim();
         const c = capIn.value.trim();
-        if (!n || !c) { setStatus('err', 'Nama dan cerita tidak boleh kosong.'); return; }
+        if (!c) { setStatus('err', 'Cerita tidak boleh kosong.'); return; }
         saveBtn.disabled = true;
         saveBtn.textContent = 'Menyimpan...';
         const { data, error } = await db.from(TABLE)
-          .update({ name: n, caption: c })
+          .update({ caption: c })
           .eq('id', item.id)
           .select();
         if (error || !data || data.length === 0) {
@@ -372,7 +595,6 @@
           saveBtn.textContent = 'Simpan';
           return;
         }
-        item.name = n;
         item.caption = c;
         setStatus('ok', 'Perubahan tersimpan.');
         showView();
@@ -380,18 +602,14 @@
       actions.appendChild(saveBtn);
       actions.appendChild(mini('Batal', '', showView));
 
-      cap.appendChild(nameIn);
       cap.appendChild(capIn);
       cap.appendChild(actions);
     }
 
     function showConfirm() {
       cap.querySelector('.actions').remove();
-      const actions = document.createElement('div');
-      actions.className = 'actions';
-      const q = document.createElement('span');
-      q.className = 'confirm';
-      q.textContent = 'Hapus kenangan ini?';
+      const actions = el('div', 'actions');
+      actions.appendChild(el('span', 'confirm', 'Hapus kenangan ini beserta suka dan komentarnya?'));
       const yes = mini('Ya, hapus', 'danger', async () => {
         yes.disabled = true;
         yes.textContent = 'Menghapus...';
@@ -407,24 +625,138 @@
         card.remove();
         if (!feedEl.children.length) renderEmpty('Belum ada kenangan. Jadilah yang pertama menempel foto.');
       });
-      actions.appendChild(q);
       actions.appendChild(yes);
       actions.appendChild(mini('Batal', '', showView));
       cap.appendChild(actions);
     }
 
+    // ---------- Suka ----------
+    const likeBtn = el('button', 'chip');
+    likeBtn.type = 'button';
+    const commentBtn = el('button', 'chip');
+    commentBtn.type = 'button';
+    engage.appendChild(likeBtn);
+    engage.appendChild(commentBtn);
+
+    function renderLike() {
+      const liked = !!(me && item.likes.includes(me.id));
+      likeBtn.className = 'chip' + (liked ? ' liked' : '');
+      likeBtn.textContent = (liked ? '♥ ' : '♡ ') + item.likes.length;
+      likeBtn.setAttribute('aria-label', liked ? 'Batal suka, ' + item.likes.length + ' suka' : 'Suka, ' + item.likes.length + ' suka');
+    }
+
+    likeBtn.addEventListener('click', async () => {
+      if (!me) { setStatus('err', 'Masuk dengan Google dulu untuk menyukai.'); return; }
+      likeBtn.disabled = true;
+      const liked = item.likes.includes(me.id);
+      if (liked) {
+        const { error } = await db.from(LIKES).delete().eq('memory_id', item.id).eq('user_id', me.id);
+        if (error) setStatus('err', 'Gagal membatalkan suka: ' + error.message);
+        else item.likes = item.likes.filter((id) => id !== me.id);
+      } else {
+        const { error } = await db.from(LIKES).insert([{ memory_id: item.id, user_id: me.id }]);
+        if (error) setStatus('err', 'Gagal menyukai: ' + error.message);
+        else item.likes.push(me.id);
+      }
+      likeBtn.disabled = false;
+      renderLike();
+    });
+
+    // ---------- Komentar ----------
+    function renderCommentBtn() {
+      commentBtn.textContent = 'Komentar (' + item.comments.length + ')';
+    }
+
+    function renderComments() {
+      commentsBox.innerHTML = '';
+
+      if (item.comments.length === 0) {
+        commentsBox.appendChild(el('div', 'no-comment', 'Belum ada komentar.'));
+      }
+
+      item.comments.forEach((c) => {
+        const row = el('div', 'comment');
+        const body = el('div', 'comment-body');
+        const a = authorOf(c.user_id, c.author_name);
+        body.appendChild(el('strong', '', a.name));
+        if (a.handle) body.appendChild(el('span', 'handle', a.handle + ' '));
+        body.appendChild(document.createTextNode(c.body || ''));
+        row.appendChild(body);
+
+        const canDelete = !!me && (c.user_id === me.id || isMine);
+        if (canDelete) {
+          row.appendChild(mini('Hapus', 'danger', async () => {
+            const { data, error } = await db.from(COMMENTS).delete().eq('id', c.id).select();
+            if (error || !data || data.length === 0) {
+              setStatus('err', 'Gagal menghapus komentar: ' + (error ? error.message : 'tidak ada izin.'));
+              return;
+            }
+            item.comments = item.comments.filter((x) => x.id !== c.id);
+            renderCommentBtn();
+            renderComments();
+          }));
+        }
+        commentsBox.appendChild(row);
+      });
+
+      if (!me) {
+        commentsBox.appendChild(el('div', 'login-hint', 'Masuk dengan Google untuk berkomentar.'));
+        return;
+      }
+      if (!myProfile) {
+        commentsBox.appendChild(el('div', 'login-hint', 'Buat profil dulu di bagian atas halaman untuk berkomentar.'));
+        return;
+      }
+
+      const form = el('div', 'comment-form');
+      const input = el('input', 'field');
+      input.type = 'text';
+      input.maxLength = 300;
+      input.placeholder = 'Tulis komentar...';
+      input.setAttribute('aria-label', 'Tulis komentar');
+
+      const send = mini('Kirim', 'primary', async () => {
+        const text = input.value.trim();
+        if (!text) return;
+        send.disabled = true;
+        const { data, error } = await db.from(COMMENTS)
+          .insert([{ memory_id: item.id, user_id: me.id, author_name: myProfile.display_name, body: text }])
+          .select();
+        send.disabled = false;
+        if (error || !data || data.length === 0) {
+          setStatus('err', 'Gagal mengirim komentar: ' + (error ? error.message : 'tidak ada izin.'));
+          return;
+        }
+        item.comments.push(data[0]);
+        renderCommentBtn();
+        renderComments();
+        const again = commentsBox.querySelector('.comment-form input');
+        if (again) again.focus();
+      });
+
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') send.click(); });
+      form.appendChild(input);
+      form.appendChild(send);
+      commentsBox.appendChild(form);
+    }
+
+    commentBtn.addEventListener('click', () => {
+      commentsBox.classList.toggle('hidden');
+      if (!commentsBox.classList.contains('hidden')) renderComments();
+    });
+
     showView();
+    renderLike();
+    renderCommentBtn();
     return card;
   }
 
   function renderEmpty(msg) {
     feedEl.innerHTML = '';
-    const d = document.createElement('div');
-    d.className = 'empty';
-    d.textContent = msg;
-    feedEl.appendChild(d);
+    feedEl.appendChild(el('div', 'empty', msg));
   }
 
+  // ===== Muat feed =====
   async function loadMemories() {
     if (!db) return;
     const { data, error } = await db.from(TABLE).select('*').order('id', { ascending: false });
@@ -435,9 +767,40 @@
       return;
     }
 
+    // Ambil suka dan komentar untuk semua kenangan sekaligus
+    const ids = data.map((d) => d.id);
+    const [likesRes, commentsRes] = await Promise.all([
+      db.from(LIKES).select('memory_id, user_id').in('memory_id', ids),
+      db.from(COMMENTS).select('*').in('memory_id', ids).order('id', { ascending: true })
+    ]);
+
+    if (likesRes.error || commentsRes.error) {
+      const msg = (likesRes.error || commentsRes.error).message;
+      setStatus('err', 'Suka dan komentar belum bisa dimuat: ' + msg);
+    }
+
+    // Ambil profil semua penulis (kenangan dan komentar)
+    const authorIds = new Set();
+    data.forEach((d) => { if (d.user_id) authorIds.add(d.user_id); });
+    (commentsRes.data || []).forEach((c) => { if (c.user_id) authorIds.add(c.user_id); });
+    profilesById = {};
+    if (authorIds.size > 0) {
+      const profRes = await db.from(PROFILES).select('user_id, username, display_name').in('user_id', Array.from(authorIds));
+      if (!profRes.error) (profRes.data || []).forEach((p) => { profilesById[p.user_id] = p; });
+    }
+
+    const likesBy = {};
+    (likesRes.data || []).forEach((l) => { (likesBy[l.memory_id] = likesBy[l.memory_id] || []).push(l.user_id); });
+    const commentsBy = {};
+    (commentsRes.data || []).forEach((c) => { (commentsBy[c.memory_id] = commentsBy[c.memory_id] || []).push(c); });
+
     feedEl.innerHTML = '';
     const frag = document.createDocumentFragment();
-    data.forEach((item) => frag.appendChild(buildCard(item)));
+    data.forEach((item) => {
+      item.likes = likesBy[item.id] || [];
+      item.comments = commentsBy[item.id] || [];
+      frag.appendChild(buildCard(item));
+    });
     feedEl.appendChild(frag);
   }
 </script>
